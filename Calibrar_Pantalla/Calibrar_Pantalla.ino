@@ -6,7 +6,7 @@
 //---------------------------------------- 
 
 // Defines the T_CS Touchscreen PIN.
-#define T_CS_PIN    13 //--> T_CS
+#define T_CS_PIN    17 //--> T_CS
 
 // Defines the width and height of the screen, also the font size.
 #define SCREEN_WIDTH 240

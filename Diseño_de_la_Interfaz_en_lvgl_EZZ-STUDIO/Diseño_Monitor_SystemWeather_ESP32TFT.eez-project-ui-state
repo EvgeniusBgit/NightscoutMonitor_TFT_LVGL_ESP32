@@ -69,8 +69,8 @@
           },
           {
             "type": "border",
-            "selected": 0,
-            "size": 80.5,
+            "selected": 1,
+            "size": 86.5,
             "location": "bottom",
             "children": [
               {
@@ -165,8 +165,7 @@
                       "enableClose": false,
                       "icon": "svg:hierarchy"
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
@@ -190,10 +189,46 @@
               "type": "tabset",
               "id": "EDITORS",
               "weight": 58.927827395987336,
-              "selected": -1,
+              "selected": 1,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
-              "children": []
+              "children": [
+                {
+                  "type": "tab",
+                  "id": "#73de742a-0bf8-4c6d-898c-80398bea094a",
+                  "name": "Settings",
+                  "component": "editor",
+                  "config": {
+                    "objectPath": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/settings",
+                    "subObjectPath": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/settings",
+                    "permanent": false
+                  },
+                  "icon": "material:settings"
+                },
+                {
+                  "type": "tab",
+                  "id": "#6451d704-7811-4b4b-b4ea-40a54646ba4c",
+                  "name": "Config",
+                  "component": "editor",
+                  "config": {
+                    "objectPath": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/4",
+                    "permanent": false
+                  },
+                  "icon": "svg:page"
+                },
+                {
+                  "type": "tab",
+                  "id": "#420469a7-69d2-4409-a976-51128b4855e9",
+                  "name": "Monitor",
+                  "component": "editor",
+                  "config": {
+                    "objectPath": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/1",
+                    "permanent": true
+                  },
+                  "icon": "svg:page"
+                }
+              ],
+              "active": true
             },
             {
               "type": "tabset",
@@ -1030,18 +1065,21 @@
       "selection": {
         "0": {
           "5": {},
+          "31": {},
           "32": {
-            "$selected": true
+            "0": {
+              "$selected": true
+            }
           },
           "33": {}
         }
       },
       "transform": {
         "translate": {
-          "x": -483.1,
-          "y": -350.5214285714286
+          "x": -287.04699004975134,
+          "y": -145.95568941009236
         },
-        "scale": 2.5
+        "scale": 1.5
       },
       "timeline": {
         "isEditorActive": false,
@@ -1056,18 +1094,18 @@
           "0": {},
           "1": {},
           "2": {},
-          "6": {},
-          "11": {
+          "6": {
             "$selected": true
-          }
+          },
+          "11": {}
         }
       },
       "transform": {
         "translate": {
-          "x": -407.7142857142857,
-          "y": -337.0357142857142
+          "x": -264.41702741702727,
+          "y": -179.287518037518
         },
-        "scale": 2.5
+        "scale": 1.5
       },
       "timeline": {
         "isEditorActive": false,
@@ -1088,10 +1126,10 @@
       },
       "transform": {
         "translate": {
-          "x": -431.12852504638363,
-          "y": -286.03217223252824
+          "x": -297.414709269057,
+          "y": -165.58369079540185
         },
-        "scale": 2.5
+        "scale": 1.5
       },
       "timeline": {
         "isEditorActive": false,
@@ -1108,10 +1146,10 @@
       },
       "transform": {
         "translate": {
-          "x": -430,
-          "y": -303
+          "x": -311.75,
+          "y": -176.625
         },
-        "scale": 2.5
+        "scale": 1.5
       },
       "timeline": {
         "isEditorActive": false,
@@ -1124,17 +1162,21 @@
       "selection": {
         "0": {
           "0": {
-            "$selected": true
+            "2": {},
+            "3": {},
+            "4": {
+              "$selected": true
+            }
           },
           "1": {}
         }
       },
       "transform": {
         "translate": {
-          "x": -445,
-          "y": -383
+          "x": -285.69448439620083,
+          "y": -84.15566485753067
         },
-        "scale": 2.5
+        "scale": 1.5
       },
       "timeline": {
         "isEditorActive": false,
@@ -1161,6 +1203,6 @@
   "lvglExpandedPropertiesGroup": [],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,
-  "flowZoom": 2.5,
+  "flowZoom": 1.5,
   "implementationLanguage": "C"
 }

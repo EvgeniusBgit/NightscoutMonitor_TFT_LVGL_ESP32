@@ -132,15 +132,8 @@ XPT2046_Touchscreen touchscreen(T_CS_PIN);
 uint16_t x, y, z;
 
 // Clima ----------------------------------------
-const char* const daysOfTheWeek[] = {
-    "Sunday", "Monday", "Tuesday", "Wednesday", 
-    "Thursday", "Friday", "Saturday", "Error"
-};
-
-const char* const namesOfMonths[] = {
-    "January", "February", "March", "April", "May", "June", 
-    "July", "August", "September", "October", "November", "December", "Error"
-};
+const char daysOfTheWeek[8][24] = {"Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Error"};
+const char namesOfMonths[13][20] = {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь", "Error"};
 String str_Weather_Main, str_Weather_Icon, str_Weather_Description;
 String str_Temperature, str_Feels_Like, str_Temp_Max, str_Temp_Min;
 String str_Humidity, str_Wind_Speed, str_Pressure, str_Visibility;
@@ -490,8 +483,8 @@ void obtenerDatos_OpenWeatherMap()
   // Check WiFi connection status.
   if (WiFi.status() == WL_CONNECTED)
   {
-    String serverPath = "http://api.openweathermap.org/data/2.5/weather?q=" + String(llaves.city) + "," + String(llaves.countryCode) + "&units=metric&APPID=" + String(llaves.keyWeather) + "&lang=en";
-Serial.println(serverPath);
+    String serverPath = "http://api.openweathermap.org/data/2.5/weather?q=" + String(llaves.city) + "," + String(llaves.countryCode) + "&units=metric&APPID=" + String(llaves.keyWeather) + "&lang=sp";
+
     jsonBuffer = httpGETRequest(serverPath.c_str());
     Serial.println();
     Serial.println("Datos meteorológicos en forma JSON:");
