@@ -1,7 +1,8 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/4",
-    "selectedBitmapObject": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/bitmaps/34",
+    "selectedUserPageObject": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/0",
+    "selectedFontObject": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/fonts/0",
+    "selectedBitmapObject": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/bitmaps/25",
     "subnavigationSelectedItems": {}
   },
   "layoutModel": {
@@ -22,6 +23,7 @@
           },
           {
             "type": "border",
+            "selected": 2,
             "size": 240,
             "location": "right",
             "children": [
@@ -69,7 +71,7 @@
           },
           {
             "type": "border",
-            "selected": 1,
+            "selected": 0,
             "size": 86.5,
             "location": "bottom",
             "children": [
@@ -122,7 +124,7 @@
                 {
                   "type": "tabset",
                   "id": "#c79f9c8b-34ae-4c7c-aab3-3118af354f81",
-                  "weight": 0.6696240841032175,
+                  "weight": 1.429180380942103,
                   "enableClose": false,
                   "children": [
                     {
@@ -154,7 +156,7 @@
                 {
                   "type": "tabset",
                   "id": "#4675ba8f-c6eb-4172-99a9-64b0292eb5a1",
-                  "weight": 2.1559573112456194,
+                  "weight": 1.3964010144067338,
                   "enableClose": false,
                   "children": [
                     {
@@ -188,11 +190,22 @@
             {
               "type": "tabset",
               "id": "EDITORS",
-              "weight": 58.927827395987336,
-              "selected": 1,
+              "weight": 49.680301602039144,
+              "selected": 2,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
+                {
+                  "type": "tab",
+                  "id": "#63e8f182-f28d-49d7-8f0e-059ddd3d178a",
+                  "name": "Montserrat100",
+                  "component": "editor",
+                  "config": {
+                    "objectPath": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/fonts/0",
+                    "permanent": false
+                  },
+                  "icon": "material:font_download"
+                },
                 {
                   "type": "tab",
                   "id": "#73de742a-0bf8-4c6d-898c-80398bea094a",
@@ -208,22 +221,11 @@
                 {
                   "type": "tab",
                   "id": "#6451d704-7811-4b4b-b4ea-40a54646ba4c",
-                  "name": "Config",
+                  "name": "Main",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/4",
+                    "objectPath": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/0",
                     "permanent": false
-                  },
-                  "icon": "svg:page"
-                },
-                {
-                  "type": "tab",
-                  "id": "#420469a7-69d2-4409-a976-51128b4855e9",
-                  "name": "Monitor",
-                  "component": "editor",
-                  "config": {
-                    "objectPath": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/1",
-                    "permanent": true
                   },
                   "icon": "svg:page"
                 }
@@ -233,7 +235,7 @@
             {
               "type": "tabset",
               "id": "#e1d42b7c-b98e-4370-ba66-02cd5279cc0d",
-              "weight": 22.79534531368672,
+              "weight": 32.042871107634916,
               "children": [
                 {
                   "type": "tab",
@@ -1064,22 +1066,22 @@
     "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/0[flow-state]": {
       "selection": {
         "0": {
-          "5": {},
-          "31": {},
-          "32": {
-            "0": {
-              "$selected": true
-            }
-          },
-          "33": {}
+          "4": {},
+          "6": {},
+          "7": {},
+          "17": {},
+          "18": {},
+          "23": {
+            "$selected": true
+          }
         }
       },
       "transform": {
         "translate": {
-          "x": -287.04699004975134,
-          "y": -145.95568941009236
+          "x": -160,
+          "y": -120
         },
-        "scale": 1.5
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1093,11 +1095,11 @@
         "0": {
           "0": {},
           "1": {},
-          "2": {},
-          "6": {
-            "$selected": true
-          },
-          "11": {}
+          "2": {
+            "2": {
+              "$selected": true
+            }
+          }
         }
       },
       "transform": {
@@ -1105,7 +1107,7 @@
           "x": -264.41702741702727,
           "y": -179.287518037518
         },
-        "scale": 1.5
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1117,19 +1119,15 @@
     "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/2[flow-state]": {
       "selection": {
         "0": {
-          "0": {
-            "$selected": true
-          },
-          "1": {},
-          "4": {}
+          "0": {}
         }
       },
       "transform": {
         "translate": {
           "x": -297.414709269057,
-          "y": -165.58369079540185
+          "y": -285.5836907954018
         },
-        "scale": 1.5
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1141,15 +1139,20 @@
     "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/3[flow-state]": {
       "selection": {
         "0": {
-          "0": {}
+          "0": {
+            "20": {},
+            "21": {},
+            "22": {},
+            "23": {}
+          }
         }
       },
       "transform": {
         "translate": {
           "x": -311.75,
-          "y": -176.625
+          "y": -296.625
         },
-        "scale": 1.5
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1199,10 +1202,23 @@
   "logsPanelFilter": "all",
   "selectedStylePropertyName": "",
   "lvglPart": "MAIN",
-  "lvglState": "DEFAULT",
-  "lvglExpandedPropertiesGroup": [],
+  "lvglState": "PRESSED",
+  "lvglExpandedPropertiesGroup": [
+    "MISCELLANEOUS",
+    "TEXT",
+    "ARC",
+    "BACKGROUND",
+    "POSITION AND SIZE",
+    "LAYOUT",
+    "PADDING",
+    "MARGIN",
+    "BORDER",
+    "OUTLINE",
+    "SHADOW",
+    "IMAGE"
+  ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,
-  "flowZoom": 1.5,
+  "flowZoom": 1,
   "implementationLanguage": "C"
 }
