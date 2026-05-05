@@ -50,13 +50,15 @@ struct creden // Estos datos son editables desde la pantalla tactil
   char nsSecret[45];   // token nightscout
   char nsAlertMax[15]; // alert
   char nsAlertMin[15];
-  char keyWeather[40]; // API openWeatherMap --> https://home.openweathermap.org/users/sign_in
-  char city[20];       // Ejm: New York, London, Madrid --> https://openweathermap.org/
-  char countryCode[6]; // Ejm: US, GB, ES
-  char utm[4];         // Ejm: -6, +1, +4
+  char keyWeather[40];     // API openWeatherMap --> https://home.openweathermap.org/users/sign_in
+  char city[20];           // Ejm: New York, London, Madrid --> https://openweathermap.org/
+  char countryCode[6];     // Ejm: US, GB, ES
+  char utm[4];             // Ejm: -6, +1, +4
+  char nsAlertAfterMin[6]; // Минуты, если данные в ns устарели, предупреждать.
+  char nsRepeatThrough[6]; // Колличество запросов ns, перед повторением звукового сигнала.
   bool mute;
 };
-creden llaves = {"null", "null", "null", "null", "null", "null", "null", "Stavropol", "RU", "+3", false};
+creden llaves = {"null", "null", "null", "null", "null", "null", "null", "Stavropol", "RU", "+3", "10", "5", false};
 
 struct datosPer
 {
@@ -151,6 +153,17 @@ void getDatos()
     llaves.keyWeather[sizeof(llaves.keyWeather) - 1] = '\0';
   }
 }
+
+void SetVolImg()
+{
+  if (llaves.mute == true)
+    lv_img_set_src(objects.btn_view_config_1, &img_vol_down18);
+  else
+    lv_img_set_src(objects.btn_view_config_1, &img_vol_up18);
+
+  update_UI();
+}
+
 void setDatos()
 {
   int temp[TOTAL_PERFILES][3];
@@ -369,7 +382,7 @@ void actualizarHora()
   lv_snprintf(str_Time, sizeof(str_Time), "%02d:%02d:%02d", t_hour, t_minute, t_second);
   lv_label_set_text(objects.label_time, str_Time);
 }
-void monitorSerial()
+/*void monitorSerial()
 {
   if (Serial.available())
   {
@@ -378,12 +391,12 @@ void monitorSerial()
       if (i != TOTAL_PERFILES_SERIAL - 1)
       {
         String newVal = Serial.readStringUntil(',');
-        nuevosDatos(newVal, i);
+        //nuevosDatos(newVal, i);
       }
       else
       {
         String newVal = Serial.readStringUntil('#');
-        nuevosDatos(newVal, i);
+        //nuevosDatos(newVal, i);
       }
     }
     tAntNuevosDat = millis();
@@ -398,7 +411,7 @@ void monitorSerial()
       }
     }
   }
-}
+}*/
 
 //----------------------------------------
 // HTTP клиент.
@@ -604,9 +617,29 @@ void AlertAlarm(lv_color_t color)
   }
 }
 
+// Функция для проверки актуальности данных
+void CheckDataFreshness(long long lastEntryTimeMs)
+{
+  time_t now;
+  time(&now);
+  long long currentTimeMs = (long long)now * 1000;
+  long long diff = currentTimeMs - lastEntryTimeMs;
+
+  // 4. Проверяем порог в llaves.nsAlertAfterMin минут (60 000 мс)
+  if (diff > 60000 * atoi(llaves.nsAlertAfterMin))
+  {
+    lv_obj_set_style_bg_color(objects.ns_panel, lv_color_hex(0xa7079b), LV_PART_MAIN);
+  }
+  else
+  {
+    lv_obj_set_style_bg_color(objects.ns_panel, lv_color_hex(0x262635), LV_PART_MAIN);
+  }
+}
+
 // Set nightscout UI.
 void UpdateNsUI(char str_Svg[6], char str_Delta[6], char str_Direction[16],
-                char str_info[40], lv_style_t *style_strikethrough, bool isGetNsAttempt)
+                char str_info[40], lv_style_t *style_strikethrough, bool isGetNsAttempt,
+                char char_nsDate[20])
 {
   if (objects.ns_current != NULL && isGetNsAttempt)
   {
@@ -615,6 +648,7 @@ void UpdateNsUI(char str_Svg[6], char str_Delta[6], char str_Direction[16],
 
   lv_label_set_text(objects.ns_current, str_Svg);
   lv_label_set_text(objects.ns_delta, str_Delta);
+  lv_label_set_text(objects.ns_data, char_nsDate);
 
   if (strcmp(str_Direction, "DoubleUp") == 0)
   {
@@ -711,18 +745,13 @@ void ActualizarNS()
   if (jsonBuffer.length() <= 0)
   {
     lv_snprintf(str_info, sizeof(str_info), "Error get NS data. [%.1i]", getNsAttempt);
-    // strlcpy(str_Svg, "--.-", sizeof(str_Svg));
-    // strlcpy(str_Delta, "0.0", sizeof(str_Delta));
-    // strlcpy(str_Direction, "Flat", sizeof(str_Direction));
-    // getNsAttempt++;
-    // updateNsUI(str_Svg, str_Delta, str_Direction, str_info);
-
     lv_label_set_text(objects.label_info, str_info);
 
     if (objects.ns_current != NULL && getNsAttempt == 0)
     {
       lv_obj_add_style(objects.ns_current, &style_strikethrough, 0);
     }
+
     update_UI();
     getNsAttempt++;
 
@@ -734,12 +763,6 @@ void ActualizarNS()
   if (JSON.typeof(myObject) != "array" && myObject.length() <= 0)
   {
     lv_snprintf(str_info, sizeof(str_info), "Error get NS data. [%.1i]", getNsAttempt);
-    // strlcpy(str_Svg, "--.-", sizeof(str_Svg));
-    // strlcpy(str_Delta, "0.0", sizeof(str_Delta));
-    // strlcpy(str_Direction, "Flat", sizeof(str_Direction));
-    // getNsAttempt++;
-    // updateNsUI(str_Svg, str_Delta, str_Direction, str_info);
-
     lv_label_set_text(objects.label_info, str_info);
 
     if (objects.ns_current != NULL && getNsAttempt == 0)
@@ -775,6 +798,15 @@ void ActualizarNS()
       strlcpy(str_Direction, "NONE", sizeof(str_Direction));
     }
 
+    // Получение даты когда был передан сахар в найтскаут.
+    long long nsDate = atoll(JSON.stringify(myObject[0]["date"]).c_str());
+    time_t rawTime = (time_t)(nsDate / 1000);
+    // Добавть UTS из настройки
+    rawTime += (atoi(llaves.utm) * 3600);
+    struct tm *timeInfo;
+    timeInfo = gmtime(&rawTime);
+    char char_nsDate[20];
+    strftime(char_nsDate, sizeof(char_nsDate), "%d.%m.%y %H:%M", timeInfo);
     float f_Svg = atof(str_Svg) / 18;
     char ca_svg[10];
 
@@ -783,13 +815,13 @@ void ActualizarNS()
     else
       lv_snprintf(ca_svg, sizeof(ca_svg), " %.1f ", f_Svg);
 
-    // actualizarHora();
     char ca_Time[10];
     sprintf(ca_Time, "%02d:%02d:%02d", t_hour, t_minute, t_second);
 
     lv_snprintf(str_info, sizeof(str_info), "Nightscout data was received in %s [%.1i]", ca_Time, getNsAttempt);
 
-    UpdateNsUI(ca_svg, str_Delta, str_Direction, str_info, &style_strikethrough, getNsAttempt > 0);
+    UpdateNsUI(ca_svg, str_Delta, str_Direction, str_info,
+               &style_strikethrough, getNsAttempt > 0, char_nsDate);
 
     float f_AlertMin = atof(llaves.nsAlertMin);
     float f_AlertMax = atof(llaves.nsAlertMax);
@@ -801,6 +833,8 @@ void ActualizarNS()
     // Красный (Низкий)
     if (f_Svg <= f_AlertMin)
       AlertAlarm(lv_color_hex(0xFF0000));
+
+    CheckDataFreshness(nsDate);
 
     getNsAttempt = 0;
   }
@@ -998,14 +1032,15 @@ static void viewConfig_handler(lv_event_t *e)
     lv_textarea_set_text(objects.txt_ns_secret, llaves.nsSecret);
     lv_textarea_set_text(objects.ns_alert_max, llaves.nsAlertMax);
     lv_textarea_set_text(objects.ns_alert_min, llaves.nsAlertMin);
-    // TODO добавить mute;
+    lv_textarea_set_text(objects.ns_alert_after_min, llaves.nsAlertAfterMin);
+    lv_textarea_set_text(objects.ns_repeat_through, llaves.nsRepeatThrough);
 
     // debug();
   }
 }
 static void viewPerfiles_handler(lv_event_t *e)
 {
-  lv_event_code_t code = lv_event_get_code(e); //--> Obtenga el código del evento.
+  /*lv_event_code_t code = lv_event_get_code(e); //--> Obtenga el código del evento.
   if (code == LV_EVENT_CLICKED)
   {
     vistaConfig = true;
@@ -1019,7 +1054,7 @@ static void viewPerfiles_handler(lv_event_t *e)
     lv_textarea_set_text(objects.txt_ymax, "");
     lv_textarea_set_text(objects.txt_warn, "");
     newAtajo = -1;
-  }
+  }*/
 }
 
 static void viewMain1_handler(lv_event_t *e)
@@ -1167,6 +1202,18 @@ static void graficar_05_handler(lv_event_t *e)
   lv_event_code_t code = lv_event_get_code(e);
   if (code == LV_EVENT_CLICKED)
   {
+    lv_scr_load_anim(objects.grafico, LV_SCR_LOAD_ANIM_NONE, 400, 0, false);
+    float f_AlertMax = atof(llaves.nsAlertMax);
+    float f_AlertMin = atof(llaves.nsAlertMin);
+    int positionMax = round(210 - (11, 666 * f_AlertMax));
+    int positionMin = round(210 - (11, 666 * f_AlertMin));
+    lv_obj_set_y(objects.ns_grap_alert_max, positionMax);
+    lv_obj_move_foreground(objects.ns_grap_alert_max);
+    lv_obj_set_y(objects.ns_grap_alert_min, positionMin);
+    lv_obj_move_foreground(objects.ns_grap_alert_min);
+
+    update_UI();
+
     /* nGraf = 5;
      if (verMonitor[nGraf] < 0)
      {
@@ -1175,13 +1222,13 @@ static void graficar_05_handler(lv_event_t *e)
 
      vistaGrafico = true;*/
     // lv_obj_add_flag(objects.grafico, LV_OBJ_FLAG_HIDDEN);                    // Ocultar momentáneamente
-    lv_scr_load_anim(objects.grafico, LV_SCR_LOAD_ANIM_NONE, 400, 0, false); // Cargar pantalla con animación
-                                                                             /* lv_timer_t *t = lv_timer_create_basic();                                 // Mostrar justo después de un pequeño delay
-                                                                              lv_timer_set_period(t, 10);                                              // espera 10 ms
-                                                                              lv_timer_set_repeat_count(t, 1);
-                                                                              lv_timer_set_user_data(t, objects.grafico);
-                                                                              lv_timer_set_cb(t, [](lv_timer_t *t)
-                                                                                              { lv_obj_clear_flag((lv_obj_t *)lv_timer_get_user_data(t), LV_OBJ_FLAG_HIDDEN); });*/
+    // lv_scr_load_anim(objects.grafico, LV_SCR_LOAD_ANIM_NONE, 400, 0, false); // Cargar pantalla con animación
+    /* lv_timer_t *t = lv_timer_create_basic();                                 // Mostrar justo después de un pequeño delay
+     lv_timer_set_period(t, 10);                                              // espera 10 ms
+     lv_timer_set_repeat_count(t, 1);
+     lv_timer_set_user_data(t, objects.grafico);
+     lv_timer_set_cb(t, [](lv_timer_t *t)
+                     { lv_obj_clear_flag((lv_obj_t *)lv_timer_get_user_data(t), LV_OBJ_FLAG_HIDDEN); });*/
 
     // lv_label_set_text(objects.grap_texto, perfiles[verMonitor[nGraf]].descrip);
     // lv_label_set_text(objects.label_y, perfiles[verMonitor[nGraf]].simbolo);
@@ -1227,7 +1274,7 @@ static void box_menuPerfiles_handler(lv_event_t *e)
     guardDatY();
   }*/
 
-  if (code == LV_EVENT_VALUE_CHANGED)
+  /*if (code == LV_EVENT_VALUE_CHANGED)
   {
     newAtajo = lv_dropdown_get_selected(obj) - 1;
     if (newAtajo < 0)
@@ -1240,14 +1287,14 @@ static void box_menuPerfiles_handler(lv_event_t *e)
     }
 
     String menuBox = "Seleccionar\n";
-    /*for (int i = 0; i < TOTAL_PERFILES; i++)
+    for (int i = 0; i < TOTAL_PERFILES; i++)
     {
       menuBox += String(perfiles[i].nombre);
       if (i != (TOTAL_PERFILES - 1))
       {
         menuBox += "\n";
       }
-    }*/
+    }
     lv_dropdown_set_options(objects.menu_opciones, menuBox.c_str());
     lv_dropdown_set_selected(objects.menu_opciones, (verMonitor[newAtajo] + 1));
 
@@ -1258,7 +1305,7 @@ static void box_menuPerfiles_handler(lv_event_t *e)
       lv_textarea_set_text(objects.txt_warn, "");
       return;
     }
-    /*char buffer0[10];
+    char buffer0[10];
     sprintf(buffer0, "%d", perfiles[verMonitor[newAtajo]].ymin);
     lv_textarea_set_text(objects.txt_ymin, buffer0);
 
@@ -1268,8 +1315,8 @@ static void box_menuPerfiles_handler(lv_event_t *e)
 
     char buffer2[10];
     sprintf(buffer2, "%d", perfiles[verMonitor[newAtajo]].warn);
-    lv_textarea_set_text(objects.txt_warn, buffer2);*/
-  }
+    lv_textarea_set_text(objects.txt_warn, buffer2);
+  }*/
 }
 static void box_menuOpciones_handler(lv_event_t *e)
 {
@@ -1288,32 +1335,32 @@ static void box_menuOpciones_handler(lv_event_t *e)
     if (newAtajo < 0)
       return;
 
-    int menuId = lv_dropdown_get_selected(obj) - 1;
-    if (menuId < 0)
-    {
-      lv_label_set_text(objects.label_estado, "Perfil eliminado.");
-      lv_textarea_set_text(objects.txt_ymin, "");
-      lv_textarea_set_text(objects.txt_ymax, "");
-      lv_textarea_set_text(objects.txt_warn, "");
-      verMonitor[newAtajo] = -1;
-    }
-    else
-    {
-      verMonitor[newAtajo] = menuId;
+    /* int menuId = lv_dropdown_get_selected(obj) - 1;
+     if (menuId < 0)
+     {
+       lv_label_set_text(objects.label_estado, "Perfil eliminado.");
+       lv_textarea_set_text(objects.txt_ymin, "");
+       lv_textarea_set_text(objects.txt_ymax, "");
+       lv_textarea_set_text(objects.txt_warn, "");
+       verMonitor[newAtajo] = -1;
+     }
+     else
+     {
+       verMonitor[newAtajo] = menuId;
 
-      /* char buffer0[10];
-       sprintf(buffer0, "%d", perfiles[verMonitor[newAtajo]].ymin);
-       lv_textarea_set_text(objects.txt_ymin, buffer0);
+        char buffer0[10];
+        sprintf(buffer0, "%d", perfiles[verMonitor[newAtajo]].ymin);
+        lv_textarea_set_text(objects.txt_ymin, buffer0);
 
-       char buffer1[10];
-       sprintf(buffer1, "%d", perfiles[verMonitor[newAtajo]].ymax);
-       lv_textarea_set_text(objects.txt_ymax, buffer1);
+        char buffer1[10];
+        sprintf(buffer1, "%d", perfiles[verMonitor[newAtajo]].ymax);
+        lv_textarea_set_text(objects.txt_ymax, buffer1);
 
-       char buffer2[10];
-       sprintf(buffer2, "%d", perfiles[verMonitor[newAtajo]].warn);
-       lv_textarea_set_text(objects.txt_warn, buffer2);*/
-    }
-    lv_label_set_text(objects.text_view, txtEstado().c_str());
+        char buffer2[10];
+        sprintf(buffer2, "%d", perfiles[verMonitor[newAtajo]].warn);
+        lv_textarea_set_text(objects.txt_warn, buffer2);
+     }
+     lv_label_set_text(objects.text_view, txtEstado().c_str());*/
   }
 }
 
@@ -1335,6 +1382,18 @@ static void new_brillo_handler(lv_event_t *e)
   lv_snprintf(buf, sizeof(buf), "%d%s", porc, "%");
   lv_label_set_text(my_label_slider, buf);
 }
+
+static void btn_vol_config_handler(lv_event_t *e)
+{
+  lv_event_code_t code = lv_event_get_code(e);
+  if (code == LV_EVENT_CLICKED)
+  {
+    llaves.mute = !llaves.mute;
+    SetVolImg();
+    setDatos();
+  }
+}
+
 static void btn_guardaCreden_handler(lv_event_t *e)
 {
   lv_event_code_t code = lv_event_get_code(e);
@@ -1350,6 +1409,9 @@ static void btn_guardaCreden_handler(lv_event_t *e)
     const char *txtNsSecret = lv_textarea_get_text(objects.txt_ns_secret);
     const char *txtNsAlertMax = lv_textarea_get_text(objects.ns_alert_max);
     const char *txtNsAlertMin = lv_textarea_get_text(objects.ns_alert_min);
+    const char *nsAlertAfterMin = lv_textarea_get_text(objects.ns_alert_after_min);
+    const char *nsRepeatThrough = lv_textarea_get_text(objects.ns_repeat_through);
+
     // TODO добавить mute
 
     if (strlen(txtWifi) > 0)
@@ -1406,6 +1468,16 @@ static void btn_guardaCreden_handler(lv_event_t *e)
     {
       strncpy(llaves.nsAlertMin, txtNsAlertMin, sizeof(llaves.nsAlertMin) - 1);
       llaves.nsAlertMin[sizeof(llaves.nsAlertMin) - 1] = '\0';
+    }
+    if (strlen(nsAlertAfterMin) > 0)
+    {
+      strncpy(llaves.nsAlertAfterMin, nsAlertAfterMin, sizeof(llaves.nsAlertAfterMin) - 1);
+      llaves.nsAlertAfterMin[sizeof(llaves.nsAlertAfterMin) - 1] = '\0';
+    }
+    if (strlen(nsRepeatThrough) > 0)
+    {
+      strncpy(llaves.nsRepeatThrough, nsRepeatThrough, sizeof(llaves.nsRepeatThrough) - 1);
+      llaves.nsRepeatThrough[sizeof(llaves.nsRepeatThrough) - 1] = '\0';
     }
     // TODO Добавить mute
 
@@ -1485,14 +1557,14 @@ static void teclado2_handler(lv_event_t *e)
 }
 static void teclado_evento(lv_event_t *e)
 {
-  lv_event_code_t code = lv_event_get_code(e);
-  if (code == LV_EVENT_READY)
-  {
-    lv_keyboard_set_textarea(objects.teclado, NULL);
-    lv_obj_add_flag(objects.teclado, LV_OBJ_FLAG_HIDDEN);
-    lv_keyboard_set_textarea(objects.teclado2, NULL);
-    lv_obj_add_flag(objects.teclado2, LV_OBJ_FLAG_HIDDEN);
-  }
+  /* lv_event_code_t code = lv_event_get_code(e);
+   if (code == LV_EVENT_READY)
+   {
+     lv_keyboard_set_textarea(objects.teclado, NULL);
+     lv_obj_add_flag(objects.teclado, LV_OBJ_FLAG_HIDDEN);
+     lv_keyboard_set_textarea(objects.teclado2, NULL);
+     lv_obj_add_flag(objects.teclado2, LV_OBJ_FLAG_HIDDEN);
+   }*/
 }
 
 //________________________________________________________________________________
@@ -1551,6 +1623,8 @@ void setup()
   actualizarClima();
   delay(1000);
 
+  SetVolImg();
+
   pinMode(T_CS_PIN, OUTPUT);
   //  actualizarCriptos();
 
@@ -1561,9 +1635,9 @@ void setup()
   //  lv_obj_add_event_cb(objects.btn_view_config_per, viewPerfiles_handler, LV_EVENT_CLICKED, NULL);
   //  lv_obj_add_event_cb(objects.grap_line, viewMonitor2_handler, LV_EVENT_CLICKED, NULL);
 
-  lv_obj_add_event_cb(objects.menu_perfiles, box_menuPerfiles_handler, LV_EVENT_ALL, NULL);
-  lv_obj_add_event_cb(objects.menu_opciones, box_menuOpciones_handler, LV_EVENT_ALL, NULL);
-  lv_obj_add_event_cb(objects.btn_volver_conf, viewMain3_handler, LV_EVENT_CLICKED, NULL);
+  // lv_obj_add_event_cb(objects.menu_perfiles, box_menuPerfiles_handler, LV_EVENT_ALL, NULL);
+  // lv_obj_add_event_cb(objects.menu_opciones, box_menuOpciones_handler, LV_EVENT_ALL, NULL);
+  // lv_obj_add_event_cb(objects.btn_volver_conf, viewMain3_handler, LV_EVENT_CLICKED, NULL);
 
   /*lv_obj_add_event_cb(objects.ns_panel, graficar_00_handler, LV_EVENT_CLICKED, NULL);
   lv_obj_add_event_cb(objects.btn_01, graficar_01_handler, LV_EVENT_CLICKED, NULL);
@@ -1571,6 +1645,7 @@ void setup()
   lv_obj_add_event_cb(objects.btn_03, graficar_03_handler, LV_EVENT_CLICKED, NULL);
   lv_obj_add_event_cb(objects.btn_04, graficar_04_handler, LV_EVENT_CLICKED, NULL);*/
   lv_obj_add_event_cb(objects.ns_panel, graficar_05_handler, LV_EVENT_CLICKED, NULL);
+  lv_obj_add_event_cb(objects.btn_view_config_1, btn_vol_config_handler, LV_EVENT_CLICKED, NULL);
 
   lv_obj_add_event_cb(objects.txt_ssid, teclado_handler, LV_EVENT_ALL, objects.teclado);
   lv_obj_add_event_cb(objects.txt_pass, teclado_handler, LV_EVENT_ALL, objects.teclado);
@@ -1586,11 +1661,13 @@ void setup()
   lv_obj_add_event_cb(objects.txt_ns_secret, teclado_handler, LV_EVENT_ALL, objects.teclado);
   lv_obj_add_event_cb(objects.ns_alert_max, teclado_handler, LV_EVENT_ALL, objects.teclado);
   lv_obj_add_event_cb(objects.ns_alert_min, teclado_handler, LV_EVENT_ALL, objects.teclado);
-  lv_obj_add_event_cb(objects.txt_ymin, teclado2_handler, LV_EVENT_ALL, objects.teclado2);
-  lv_obj_add_event_cb(objects.txt_ymax, teclado2_handler, LV_EVENT_ALL, objects.teclado2);
-  lv_obj_add_event_cb(objects.txt_warn, teclado2_handler, LV_EVENT_ALL, objects.teclado2);
-  lv_obj_add_event_cb(objects.teclado, teclado_evento, LV_EVENT_ALL, NULL);
-  lv_obj_add_event_cb(objects.teclado2, teclado_evento, LV_EVENT_ALL, NULL);
+  lv_obj_add_event_cb(objects.ns_alert_after_min, teclado_handler, LV_EVENT_ALL, objects.teclado);
+  lv_obj_add_event_cb(objects.ns_repeat_through, teclado_handler, LV_EVENT_ALL, objects.teclado);
+  // lv_obj_add_event_cb(objects.txt_ymin, teclado2_handler, LV_EVENT_ALL, objects.teclado2);
+  // lv_obj_add_event_cb(objects.txt_ymax, teclado2_handler, LV_EVENT_ALL, objects.teclado2);
+  // lv_obj_add_event_cb(objects.txt_warn, teclado2_handler, LV_EVENT_ALL, objects.teclado2);
+  // lv_obj_add_event_cb(objects.teclado, teclado_evento, LV_EVENT_ALL, NULL);
+  // lv_obj_add_event_cb(objects.teclado2, teclado_evento, LV_EVENT_ALL, NULL);
 
   lv_obj_add_event_cb(objects.brillo, new_brillo_handler, LV_EVENT_VALUE_CHANGED, objects.my_label_slider);
   lv_obj_add_event_cb(objects.btn_gurdar_cren, btn_guardaCreden_handler, LV_EVENT_CLICKED, NULL);
@@ -1628,7 +1705,7 @@ void loop()
 {
   updateTime();
 
-  monitorSerial();
+  // monitorSerial();
   updateApi();
 
   if (WiFi.status() != WL_CONNECTED)

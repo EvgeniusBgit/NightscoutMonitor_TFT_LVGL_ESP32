@@ -39,6 +39,9 @@ extern const lv_img_dsc_t img_ns_light_up;
 extern const lv_img_dsc_t img_ns_st_72p;
 extern const lv_img_dsc_t img_ns_up_72p;
 extern const lv_img_dsc_t img_ns_delta_22p;
+extern const lv_img_dsc_t img_vol_down18;
+extern const lv_img_dsc_t img_vol_up18;
+extern const lv_img_dsc_t img_alarm_on11;
 
 #ifndef EXT_IMG_DESC_T
 #define EXT_IMG_DESC_T
@@ -48,7 +51,7 @@ typedef struct _ext_img_desc_t {
 } ext_img_desc_t;
 #endif
 
-extern const ext_img_desc_t images[32];
+extern const ext_img_desc_t images[35];
 
 
 #ifdef __cplusplus

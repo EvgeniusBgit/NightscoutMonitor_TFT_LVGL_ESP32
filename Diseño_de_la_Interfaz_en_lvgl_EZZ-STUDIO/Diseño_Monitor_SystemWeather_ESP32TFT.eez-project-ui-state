@@ -2,7 +2,7 @@
   "navigation": {
     "selectedUserPageObject": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/0",
     "selectedFontObject": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/fonts/0",
-    "selectedBitmapObject": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/bitmaps/25",
+    "selectedBitmapObject": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/bitmaps/33",
     "subnavigationSelectedItems": {}
   },
   "layoutModel": {
@@ -191,10 +191,20 @@
               "type": "tabset",
               "id": "EDITORS",
               "weight": 49.680301602039144,
-              "selected": 2,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
+                {
+                  "type": "tab",
+                  "id": "#fa888b70-e4bd-4132-837b-49a8f2104d62",
+                  "name": "Main",
+                  "component": "editor",
+                  "config": {
+                    "objectPath": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/0",
+                    "permanent": false
+                  },
+                  "icon": "svg:page"
+                },
                 {
                   "type": "tab",
                   "id": "#63e8f182-f28d-49d7-8f0e-059ddd3d178a",
@@ -217,17 +227,6 @@
                     "permanent": false
                   },
                   "icon": "material:settings"
-                },
-                {
-                  "type": "tab",
-                  "id": "#6451d704-7811-4b4b-b4ea-40a54646ba4c",
-                  "name": "Main",
-                  "component": "editor",
-                  "config": {
-                    "objectPath": "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/0",
-                    "permanent": false
-                  },
-                  "icon": "svg:page"
                 }
               ],
               "active": true
@@ -1071,9 +1070,13 @@
           "7": {},
           "17": {},
           "18": {},
-          "23": {
-            "$selected": true
-          }
+          "23": {},
+          "25": {
+            "0": {
+              "$selected": true
+            }
+          },
+          "26": {}
         }
       },
       "transform": {
@@ -1094,18 +1097,20 @@
       "selection": {
         "0": {
           "0": {},
-          "1": {},
-          "2": {
-            "2": {
+          "2": {},
+          "3": {},
+          "4": {
+            "0": {
               "$selected": true
             }
-          }
+          },
+          "6": {}
         }
       },
       "transform": {
         "translate": {
-          "x": -264.41702741702727,
-          "y": -179.287518037518
+          "x": -160,
+          "y": -120
         },
         "scale": 1
       },
@@ -1119,13 +1124,16 @@
     "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/2[flow-state]": {
       "selection": {
         "0": {
-          "0": {}
+          "0": {
+            "3": {},
+            "5": {}
+          }
         }
       },
       "transform": {
         "translate": {
-          "x": -297.414709269057,
-          "y": -285.5836907954018
+          "x": -198.08137593572374,
+          "y": -116.20226459308003
         },
         "scale": 1
       },
@@ -1140,17 +1148,14 @@
       "selection": {
         "0": {
           "0": {
-            "20": {},
-            "21": {},
-            "22": {},
-            "23": {}
+            "$selected": true
           }
         }
       },
       "transform": {
         "translate": {
-          "x": -311.75,
-          "y": -296.625
+          "x": -198.08137593572374,
+          "y": -236.20226459308003
         },
         "scale": 1
       },
@@ -1187,6 +1192,24 @@
         "secondToPx": 200,
         "scrollLeft": 0
       }
+    },
+    "[Diseño_Monitor_SystemWeather_ESP32TFT.eez-project]:/userPages/-1[flow-state]": {
+      "selection": {
+        "0": {}
+      },
+      "transform": {
+        "translate": {
+          "x": -198.08137593572374,
+          "y": -116.20226459308003
+        },
+        "scale": 1
+      },
+      "timeline": {
+        "isEditorActive": false,
+        "position": 0,
+        "secondToPx": 200,
+        "scrollLeft": 0
+      }
     }
   },
   "activeOutputSection": 0,
@@ -1202,7 +1225,7 @@
   "logsPanelFilter": "all",
   "selectedStylePropertyName": "",
   "lvglPart": "MAIN",
-  "lvglState": "PRESSED",
+  "lvglState": "DEFAULT",
   "lvglExpandedPropertiesGroup": [
     "MISCELLANEOUS",
     "TEXT",
@@ -1215,7 +1238,8 @@
     "BORDER",
     "OUTLINE",
     "SHADOW",
-    "IMAGE"
+    "IMAGE",
+    "LINE"
   ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,

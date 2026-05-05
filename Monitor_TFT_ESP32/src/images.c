@@ -1,6 +1,6 @@
 #include "images.h"
 
-const ext_img_desc_t images[32] = {
+const ext_img_desc_t images[35] = {
     { "icon_location_11p", &img_icon_location_11p },
     { "icon_temp_22p", &img_icon_temp_22p },
     { "icon_max_11p", &img_icon_max_11p },
@@ -33,4 +33,7 @@ const ext_img_desc_t images[32] = {
     { "ns_st_72p", &img_ns_st_72p },
     { "ns_up_72p", &img_ns_up_72p },
     { "ns_delta_22p", &img_ns_delta_22p },
+    { "VolDown18", &img_vol_down18 },
+    { "VolUP18", &img_vol_up18 },
+    { "AlarmOn11", &img_alarm_on11 },
 };
