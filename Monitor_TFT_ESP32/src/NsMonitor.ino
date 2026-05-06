@@ -82,8 +82,10 @@ bool vistaGrafico = false;
 bool vistaConfig = false;
 bool restartSys = false;
 bool conect = true;
+bool isDataFreshnessAlarmWas = false;
 int valBrillo = 10;
 int getNsAttempt = 0;
+int getNsAlarmAttempt = 0;
 
 long tAntActClima = 0;
 long tAntActSerial = -10;
@@ -597,12 +599,14 @@ void obtenerDatos_OpenWeatherMap()
   }
 }
 
-// Get NightSciut data.
+// Get NightScout data.
 void AlertAlarm(lv_color_t color)
 {
+  int setUpNsAlarmAttempt = atoi(llaves.nsRepeatThrough);
+
   for (int i = 0; i < 10; i++)
   {
-    if (llaves.mute == false)
+    if (!llaves.mute && (getNsAlarmAttempt == setUpNsAlarmAttempt || getNsAlarmAttempt == 0))
       tone(T_BP_PIN, 2500);
 
     lv_obj_set_style_bg_color(objects.ns_panel, color, LV_PART_MAIN);
@@ -610,11 +614,16 @@ void AlertAlarm(lv_color_t color)
     delay(200);
     lv_obj_set_style_bg_color(objects.ns_panel, lv_color_hex(0x262635), LV_PART_MAIN);
     update_UI();
-    if (llaves.mute == false)
+    if (!llaves.mute && (getNsAlarmAttempt == setUpNsAlarmAttempt || getNsAlarmAttempt == 0))
       noTone(T_BP_PIN);
 
     delay(200);
   }
+
+  getNsAlarmAttempt++;
+
+  if (getNsAlarmAttempt > setUpNsAlarmAttempt)
+    getNsAlarmAttempt = 1;
 }
 
 // Функция для проверки актуальности данных
@@ -625,14 +634,23 @@ void CheckDataFreshness(long long lastEntryTimeMs)
   long long currentTimeMs = (long long)now * 1000;
   long long diff = currentTimeMs - lastEntryTimeMs;
 
-  // 4. Проверяем порог в llaves.nsAlertAfterMin минут (60 000 мс)
+  // Проверяем порог в llaves.nsAlertAfterMin минут (60 000 мс)
   if (diff > 60000 * atoi(llaves.nsAlertAfterMin))
   {
     lv_obj_set_style_bg_color(objects.ns_panel, lv_color_hex(0xa7079b), LV_PART_MAIN);
+
+    if (!isDataFreshnessAlarmWas && !llaves.mute)
+    {
+      isDataFreshnessAlarmWas = true;
+      tone(T_BP_PIN, 2500);
+      delay(1000);
+      noTone(T_BP_PIN);
+    }
   }
   else
   {
     lv_obj_set_style_bg_color(objects.ns_panel, lv_color_hex(0x262635), LV_PART_MAIN);
+    isDataFreshnessAlarmWas = false;
   }
 }
 
@@ -828,11 +846,18 @@ void ActualizarNS()
 
     // Желтый (Высокий)
     if (f_Svg >= f_AlertMax)
+    {
       AlertAlarm(lv_color_hex(0xFFFF00));
-
-    // Красный (Низкий)
-    if (f_Svg <= f_AlertMin)
-      AlertAlarm(lv_color_hex(0xFF0000));
+    }
+    else
+    {
+      // Красный (Низкий)
+      if (f_Svg <= f_AlertMin)
+        AlertAlarm(lv_color_hex(0xFF0000));
+      else
+        // Сбросить сщетчик задержки звуковой тревоги.
+        getNsAlarmAttempt = 0;
+    }
 
     CheckDataFreshness(nsDate);
 
